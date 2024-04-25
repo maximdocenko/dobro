@@ -397,7 +397,7 @@ class PostController extends Controller
             $q = WP_POST::where("post_name", $item->slug)->where("post_title", $item->title)->first();
 
             if(!$q) {
-
+                //  Создание поста
                 $v = WP_POST::create([
                     //'ID' => $item->id,
                     'post_author' => 1,
@@ -446,7 +446,7 @@ class PostController extends Controller
                     'selection_to',
                     'sorting_date',
                 ];
-
+                // Post Meta
                 foreach ($metas as $meta) {
                     POST_META::create([
                         'post_id' => $v->ID,
