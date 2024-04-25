@@ -31,12 +31,101 @@ class PostController extends Controller
 
 
     public function postgress_posts() {
-       // dd(123);
-        $data = Post::take(50000)->get();
+
+        $posts = Post::whereNotNull("delta")->get();
+        dd(count($posts));
+
+
+        $post_metas = POST_META::where("meta_key", "id")->get();
+
+        foreach($post_metas as $post_meta) {
+
+            $item = PostgressPosts::where("postgress_id", $post_meta->meta_value)->first();
+
+            if($item) {
+
+                $item->dobro_id = $post_meta->post_id;
+
+                $item->save();
+
+            }
+
+        }
+
+        return 'success';
+
+        //return "!@3";
+
+        //dd(count(PostgressPosts::all()));
+
+        $posts = Post::whereNotNull("delta")->get();
+        //dd(count($posts));
+
+        foreach($posts as $post) {
+            
+            //$meta = POST_META::where("meta_value", $post->id)->where("meta_key", "id")->first();
+
+            //if($meta) {
+                
+                $check = PostgressPosts::where("postgress_id", $post->id)->first();
+
+                if(!$check) {
+                    //dd($check);
+                    PostgressPosts::create([
+                        'postgress_id' => $post->id,
+                        'type' => $post->type,
+                        'published_at' => $post->published_at,               
+                        'delta' => $post->delta,
+                        'dobro_id' => 0,
+                    ]);
+
+                }
+
+            //}
+
+            
+        }
+
+        return "!23";
+
+        $items = PostgressPosts::all();
+
+        dd(count($items));
+
+        $arr = [];
+
+        foreach($items as $item) {
+            if(in_array($item->postgress_id, $arr)) {
+                $item->delete();
+            }
+            $arr[] = $item->postgress_id;
+        }
+
+        return "!@3";
+
+        dd(count(Post::all()));
+        //dd(123);
+
+        $post_metas = POST_META::where("meta_key", "id")->get();
+        //dd(count($post_metas));
+        foreach($post_metas as $post_meta) {
+            $items = PostgressPosts::where("postgress_id", $post_meta->meta_value)->get();
+            foreach($items as $item) {
+                //var_dump($item->dobro_id);
+                //dd($post_meta->post_id);
+                $item->dobro_id = $post_meta->post_id;
+                $item->save();
+            }
+        }
+
+        return "!@3";
+       
+        $data = Post::all();
+        dd(count($data));
         // dd(count($data));
         foreach($data as $item) {
-            $check = PostgressPosts::where("postgress_id", $item->id)->first();
-            if(!$check) {
+            //$check = PostgressPosts::where("postgress_id", $item->id)->first();
+            //if(!$check) {
                 PostgressPosts::create([
                     'postgress_id' => $item->id,
                     //'published' => $item->published,
@@ -107,7 +196,7 @@ class PostController extends Controller
                     //'org' => $item->org,
                     //'org_id' => $item->org_id,
                 ]);
-            }
+            //}
         }
         return 'success';
     }
